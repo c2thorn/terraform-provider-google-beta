@@ -17,7 +17,7 @@ description: |-
   Represents a Data Fusion instance.
 ---
 
-# google\_data\_fusion\_instance
+# google_data_fusion_instance
 
 Represents a Data Fusion instance.
 
@@ -29,7 +29,7 @@ To get more information about Instance, see:
     * [Official Documentation](https://cloud.google.com/data-fusion/docs/)
 
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_basic&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_basic&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -43,9 +43,10 @@ resource "google_data_fusion_instance" "basic_instance" {
   type   = "BASIC"
   
 }
+
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_full&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_full&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -96,7 +97,7 @@ resource "google_compute_global_address" "private_ip_alloc" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_cmek&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_cmek&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -134,9 +135,10 @@ resource "google_kms_crypto_key_iam_member" "crypto_key_member" {
 }
 
 data "google_project" "project" {}
+
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_enterprise&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_enterprise&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -151,9 +153,10 @@ resource "google_data_fusion_instance" "enterprise_instance" {
   enable_rbac = true
   
 }
+
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_event&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_event&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -177,7 +180,7 @@ resource "google_pubsub_topic" "event" {
 }
 ```
 <div class = "oics-button" style="float: right; margin: 0 0 -15px">
-  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_working_dir=data_fusion_instance_zone&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&open_in_editor=main.tf&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md" target="_blank">
+  <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fterraform-google-modules%2Fdocs-examples.git&cloudshell_image=gcr.io%2Fcloudshell-images%2Fcloudshell%3Alatest&cloudshell_print=.%2Fmotd&cloudshell_tutorial=.%2Ftutorial.md&cloudshell_working_dir=data_fusion_instance_zone&open_in_editor=main.tf" target="_blank">
     <img alt="Open in Cloud Shell" src="//gstatic.com/cloudssh/images/open-btn.svg" style="max-height: 44px; margin: 32px auto; max-width: 100%;">
   </a>
 </div>
@@ -191,6 +194,7 @@ resource "google_data_fusion_instance" "zone" {
   zone   = "us-central1-a"
   type   = "DEVELOPER"
 }
+
 ```
 
 ## Argument Reference
@@ -204,17 +208,9 @@ The following arguments are supported:
 
 * `type` -
   (Required)
-  Represents the type of Data Fusion instance. Each type is configured with
-  the default settings for processing and memory.
-  - BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines
-  using point and click UI. However, there are certain limitations, such as fewer number
-  of concurrent pipelines, no support for streaming pipelines, etc.
-  - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features
-  available, such as support for streaming pipelines, higher number of concurrent pipelines, etc.
-  - DEVELOPER: Developer Data Fusion instance. In Developer type, the user will have all features available but
-  with restrictive capabilities. This is to help enterprises design and develop their data ingestion and integration
-  pipelines at low cost.
-  Possible values are: `BASIC`, `ENTERPRISE`, `DEVELOPER`.
+  Represents the type of Data Fusion instance. Each type is configured with the default settings for processing and memory. - BASIC: Basic Data Fusion instance. In Basic type, the user will be able to create data pipelines using point and click UI. However, there are certain limitations, such as fewer number of concurrent pipelines, no support for streaming pipelines, etc. - ENTERPRISE: Enterprise Data Fusion instance. In Enterprise type, the user will have more features available, such as support for streaming pipelines, higher number of concurrent pipelines, etc. - DEVELOPER: Developer Data Fusion instance. In Developer type, the user will have all features available but with restrictive capabilities. This is to help enterprises design and develop their data ingestion and integration pipelines at low cost.
+    Default value is [`<no value>`].
+    Possible values are: `BASIC`, `ENTERPRISE`, `DEVELOPER`.
 
 
 - - -
@@ -238,11 +234,10 @@ The following arguments are supported:
 
 * `labels` -
   (Optional)
-  The resource labels for instance to use to annotate any related underlying resources,
-  such as Compute Engine VMs.
+  The resource labels for instance to use to annotate any related underlying resources, such as Compute Engine VMs.
 
-  **Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
-  Please refer to the field `effective_labels` for all of the labels present on the resource.
+**Note**: This field is non-authoritative, and will only manage the labels present in your configuration.
+Please refer to the field `effective_labels` for all of the labels present on the resource.
 
 * `options` -
   (Optional)
@@ -254,9 +249,7 @@ The following arguments are supported:
 
 * `private_instance` -
   (Optional)
-  Specifies whether the Data Fusion instance should be private. If set to
-  true, all Data Fusion nodes will have private IP addresses and will not be
-  able to access the public internet.
+  Specifies whether the Data Fusion instance should be private. If set to true, all Data Fusion nodes will have private IP addresses and will not be able to access the public internet.
 
 * `dataproc_service_account` -
   (Optional)
@@ -288,8 +281,7 @@ The following arguments are supported:
 * `accelerators` -
   (Optional)
   List of accelerators enabled for this CDF instance.
-  If accelerators are enabled it is possible a permadiff will be created with the Options field.
-  Users will need to either manually update their state file to include these diffed options, or include the field in a [lifecycle ignore changes block](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#ignore_changes).
+If accelerators are enabled it is possible a permadiff will be created with the Options field. Users will need to either manually update their state file to include these diffed options, or include the field in a [lifecycle ignore changes block](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#ignore_changes).
   Structure is [documented below](#nested_accelerators).
 
 * `region` -
@@ -300,26 +292,23 @@ The following arguments are supported:
     If it is not provided, the provider project is used.
 
 
-<a name="nested_network_config"></a>The `network_config` block supports:
+<a name="nested_network_config"></a>The `network_config` block  supports:
 
 * `ip_allocation` -
   (Required)
-  The IP range in CIDR notation to use for the managed Data Fusion instance
-  nodes. This range must not overlap with any other ranges used in the Data Fusion instance network.
+  The IP range in CIDR notation to use for the managed Data Fusion instance nodes. This range must not overlap with any other ranges used in the Data Fusion instance network.
 
 * `network` -
   (Required)
-  Name of the network in the project with which the tenant project
-  will be peered for executing pipelines. In case of shared VPC where the network resides in another host
-  project the network should specified in the form of projects/{host-project-id}/global/networks/{network}
+  Name of the network in the project with which the tenant project will be peered for executing pipelines. In case of shared VPC where the network resides in another host project the network should specified in the form of projects/{host-project-id}/global/networks/{network}
 
-<a name="nested_crypto_key_config"></a>The `crypto_key_config` block supports:
+<a name="nested_crypto_key_config"></a>The `crypto_key_config` block  supports:
 
 * `key_reference` -
   (Required)
   The name of the key which is used to encrypt/decrypt customer data. For key in Cloud KMS, the key should be in the format of projects/*/locations/*/keyRings/*/cryptoKeys/*.
 
-<a name="nested_event_publish_config"></a>The `event_publish_config` block supports:
+<a name="nested_event_publish_config"></a>The `event_publish_config` block  supports:
 
 * `enabled` -
   (Required)
@@ -329,17 +318,19 @@ The following arguments are supported:
   (Required)
   The resource name of the Pub/Sub topic. Format: projects/{projectId}/topics/{topic_id}
 
-<a name="nested_accelerators"></a>The `accelerators` block supports:
+<a name="nested_accelerators"></a>The `accelerators` block  supports:
 
 * `accelerator_type` -
   (Required)
   The type of an accelator for a CDF instance.
-  Possible values are: `CDC`, `HEALTHCARE`, `CCAI_INSIGHTS`.
+    Default value is [`<no value>`].
+    Possible values are: `CDC`, `HEALTHCARE`, `CCAI_INSIGHTS`.
 
 * `state` -
   (Required)
   The type of an accelator for a CDF instance.
-  Possible values are: `ENABLED`, `DISABLED`.
+    Default value is [`<no value>`].
+    Possible values are: `ENABLED`, `DISABLED`.
 
 ## Attributes Reference
 
@@ -348,19 +339,13 @@ In addition to the arguments listed above, the following computed attributes are
 * `id` - an identifier for the resource with format `projects/{{project}}/locations/{{region}}/instances/{{name}}`
 
 * `create_time` -
-  The time the instance was created in RFC3339 UTC "Zulu" format, accurate to nanoseconds.
+  The time the instance was created in RFC3339 UTC 'Zulu' format, accurate to nanoseconds.
 
 * `update_time` -
-  The time the instance was last updated in RFC3339 UTC "Zulu" format, accurate to nanoseconds.
+  The time the instance was last updated in RFC3339 UTC 'Zulu' format, accurate to nanoseconds.
 
 * `state` -
-  The current state of this Data Fusion instance.
-  - CREATING: Instance is being created
-  - RUNNING: Instance is running and ready for requests
-  - FAILED: Instance creation failed
-  - DELETING: Instance is being deleted
-  - UPGRADING: Instance is being upgraded
-  - RESTARTING: Instance is being restarted
+  The current state of this Data Fusion instance. - CREATING: Instance is being created - RUNNING: Instance is running and ready for requests - FAILED: Instance creation failed - DELETING: Instance is being deleted - UPGRADING: Instance is being upgraded - RESTARTING: Instance is being restarted
 
 * `state_message` -
   Additional information about the current state of this Data Fusion instance if available.
@@ -369,7 +354,7 @@ In addition to the arguments listed above, the following computed attributes are
   Endpoint on which the Data Fusion UI and REST APIs are accessible.
 
 * `service_account` -
-  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html), Deprecated)
+  ([Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html), Deprecated )
   Service account which will be used to access resources in the customer project.
 
   ~> **Warning:** `service_account` is deprecated and will be removed in a future major release. Instead, use `tenant_project_id` to extract the tenant project ID.
@@ -387,8 +372,7 @@ In addition to the arguments listed above, the following computed attributes are
   P4 service account for the customer project.
 
 * `terraform_labels` -
-  The combination of labels configured directly on the resource
-   and default labels configured on the provider.
+  The combination of labels configured directly on the resource and default labels configured on the provider.
 
 * `effective_labels` -
   All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
