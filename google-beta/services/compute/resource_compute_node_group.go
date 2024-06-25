@@ -572,6 +572,7 @@ func resourceComputeNodeGroupUpdate(d *schema.ResourceData, meta interface{}) er
 			return err
 		}
 	}
+
 	d.Partial(true)
 
 	if d.HasChange("node_template") {

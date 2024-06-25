@@ -707,6 +707,7 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		return err
 	}
+
 	billingProject := ""
 
 	project, err := tpgresource.GetProject(d, config)
@@ -721,6 +722,7 @@ func resourceComputeRouterNatCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	headers := make(http.Header)
+
 	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
@@ -1035,6 +1037,7 @@ func resourceComputeRouterNatUpdate(d *schema.ResourceData, meta interface{}) er
 
 	log.Printf("[DEBUG] Updating RouterNat %q: %#v", d.Id(), obj)
 	headers := make(http.Header)
+
 	// validates if the field action.source_nat_active_ranges is filled when the type is PRIVATE.
 	natType := d.Get("type").(string)
 	if natType == "PRIVATE" {
@@ -1299,6 +1302,7 @@ func flattenNestedComputeRouterNatUdpIdleTimeoutSec(v interface{}, d *schema.Res
 	if v == nil || tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
 		return 30
 	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1313,6 +1317,7 @@ func flattenNestedComputeRouterNatIcmpIdleTimeoutSec(v interface{}, d *schema.Re
 	if v == nil || tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
 		return 30
 	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1327,6 +1332,7 @@ func flattenNestedComputeRouterNatTcpEstablishedIdleTimeoutSec(v interface{}, d 
 	if v == nil || tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
 		return 1200
 	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1341,6 +1347,7 @@ func flattenNestedComputeRouterNatTcpTransitoryIdleTimeoutSec(v interface{}, d *
 	if v == nil || tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
 		return 30
 	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1355,6 +1362,7 @@ func flattenNestedComputeRouterNatTcpTimeWaitTimeoutSec(v interface{}, d *schema
 	if v == nil || tpgresource.IsEmptyValue(reflect.ValueOf(v)) {
 		return 120
 	}
+
 	// Handles the string fixed64 format
 	if strVal, ok := v.(string); ok {
 		if intVal, err := tpgresource.StringToFixed64(strVal); err == nil {
@@ -1981,9 +1989,10 @@ func resourceComputeRouterNatPatchDeleteEncoder(d *schema.ResourceData, meta int
 
 // ListForPatch handles making API request to get parent resource and
 // extracting list of objects.
+
 func resourceComputeRouterNatListForPatch(d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
 	config := meta.(*transport_tpg.Config)
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/routers/{{router}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}{{$.SelfLinkUri}}")
 	if err != nil {
 		return nil, err
 	}
@@ -2010,6 +2019,11 @@ func resourceComputeRouterNatListForPatch(d *schema.ResourceData, meta interface
 
 	var v interface{}
 	var ok bool
+	if v, ok = res["nats"]; ok && v != nil {
+		res = v.(map[string]interface{})
+	} else {
+		return nil, nil
+	}
 
 	v, ok = res["nats"]
 	if ok && v != nil {

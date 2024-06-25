@@ -355,6 +355,7 @@ func resourceComputeSnapshotCreate(d *schema.ResourceData, meta interface{}) err
 	headers := make(http.Header)
 
 	url = regexp.MustCompile("PRE_CREATE_REPLACE_ME").ReplaceAllLiteralString(url, sourceDiskProp.(string))
+
 	res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
 		Config:    config,
 		Method:    "POST",

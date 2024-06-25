@@ -839,6 +839,7 @@ func resourceComputeForwardingRuleRead(d *schema.ResourceData, meta interface{})
 			return fmt.Errorf("Error setting recreate_closed_psc: %s", err)
 		}
 	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading ForwardingRule: %s", err)
 	}
@@ -1002,6 +1003,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 	}
+
 	if d.HasChange("allow_global_access") {
 		obj := make(map[string]interface{})
 
@@ -1047,6 +1049,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 	}
+
 	if d.HasChange("label_fingerprint") || d.HasChange("effective_labels") {
 		obj := make(map[string]interface{})
 
@@ -1098,6 +1101,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 	}
+
 	if d.HasChange("allow_psc_global_access") {
 		obj := make(map[string]interface{})
 
@@ -1119,7 +1123,7 @@ func resourceComputeForwardingRuleUpdate(d *schema.ResourceData, meta interface{
 			UserAgent: userAgent,
 		})
 		if err != nil {
-			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeForwardingRule %q", d.Id()))
+			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeForwardingRule%q", d.Id()))
 		}
 
 		obj["fingerprint"] = getRes["fingerprint"]

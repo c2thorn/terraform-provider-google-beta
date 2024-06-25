@@ -109,7 +109,7 @@ EGRESS rules.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										ExactlyOneOf: []string{"match.0.config.0.src_ip_ranges", "match.0.config.0.dest_ip_ranges"},
+										ExactlyOneOf: []string{},
 									},
 									"src_ip_ranges": {
 										Type:     schema.TypeList,
@@ -119,7 +119,7 @@ INGRESS rules.`,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-										ExactlyOneOf: []string{"match.0.config.0.src_ip_ranges", "match.0.config.0.dest_ip_ranges"},
+										ExactlyOneOf: []string{},
 									},
 								},
 							},
@@ -600,7 +600,7 @@ func resourceComputeOrganizationSecurityPolicyRuleDelete(d *schema.ResourceData,
 func resourceComputeOrganizationSecurityPolicyRuleImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	config := meta.(*transport_tpg.Config)
 	if err := tpgresource.ParseImportId([]string{
-		"^(?P<policy_id>.+)/priority/(?P<priority>[^/]+)$",
+		"^(?P<%policy_id>.+)/priority/(?P<priority>[^/]+)$",
 	}, d, config); err != nil {
 		return nil, err
 	}

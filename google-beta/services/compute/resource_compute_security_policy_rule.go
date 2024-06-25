@@ -747,15 +747,7 @@ func resourceComputeSecurityPolicyRuleUpdate(d *schema.ResourceData, meta interf
 	}
 
 	if d.HasChange("rate_limit_options") {
-		updateMask = append(updateMask, "rateLimitOptions.rateLimitThreshold",
-			"rateLimitOptions.conformAction",
-			"rateLimitOptions.exceedRedirectOptions",
-			"rateLimitOptions.exceedAction",
-			"rateLimitOptions.enforceOnKey",
-			"rateLimitOptions.enforceOnKeyName",
-			"rateLimitOptions.enforceOnKeyConfigs",
-			"rateLimitOptions.banThreshold",
-			"rateLimitOptions.banDurationSec")
+		updateMask = append(updateMask, "rateLimitOptions.rateLimitThreshold", "rateLimitOptions.conformAction", "rateLimitOptions.exceedRedirectOptions", "rateLimitOptions.exceedAction", "rateLimitOptions.enforceOnKey", "rateLimitOptions.enforceOnKeyName", "rateLimitOptions.enforceOnKeyConfigs", "rateLimitOptions.banThreshold", "rateLimitOptions.banDurationSec")
 	}
 
 	if d.HasChange("preview") {

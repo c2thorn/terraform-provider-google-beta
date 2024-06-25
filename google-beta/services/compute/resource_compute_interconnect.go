@@ -124,6 +124,7 @@ interconnect and no BGP routes are exchanged over it. By default, the status is 
 			"labels": {
 				Type:     schema.TypeMap,
 				Optional: true,
+				ForceNew: true,
 				Description: `Labels for this resource. These can only be added or modified by the setLabels
 method. Each label key/value pair must comply with RFC1035. Label values may be empty.
 

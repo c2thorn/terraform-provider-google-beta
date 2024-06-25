@@ -368,13 +368,13 @@ func resourceComputeNetworkRead(d *schema.ResourceData, meta interface{}) error 
 		d.SetId("")
 		return nil
 	}
-
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("delete_default_routes_on_create"); !ok {
 		if err := d.Set("delete_default_routes_on_create", false); err != nil {
 			return fmt.Errorf("Error setting delete_default_routes_on_create: %s", err)
 		}
 	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading Network: %s", err)
 	}
@@ -448,11 +448,11 @@ func resourceComputeNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 	if d.HasChange("routing_mode") || d.HasChange("network_firewall_policy_enforcement_order") {
 		obj := make(map[string]interface{})
 
-		routingConfigProp, err := expandComputeNetworkRoutingConfig(nil, d, config)
+		routingModeProp, err := expandComputeNetworkRoutingMode(d.Get("routing_mode"), d, config)
 		if err != nil {
 			return err
-		} else if !tpgresource.IsEmptyValue(reflect.ValueOf(routingConfigProp)) {
-			obj["routingConfig"] = routingConfigProp
+		} else if v, ok := d.GetOkExists("routing_mode"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, routingModeProp)) {
+			obj["routingMode"] = routingModeProp
 		}
 		networkFirewallPolicyEnforcementOrderProp, err := expandComputeNetworkNetworkFirewallPolicyEnforcementOrder(d.Get("network_firewall_policy_enforcement_order"), d, config)
 		if err != nil {
@@ -707,7 +707,6 @@ func resourceComputeNetworkUpdateEncoder(d *schema.ResourceData, meta interface{
 	delete(obj, "numeric_id") // Field doesn't exist in the API
 	return obj, nil
 }
-
 func resourceComputeNetworkDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
 	res["numericId"] = res["id"] // stores unique id into numericId attribute before it's changed to path format
 	return res, nil

@@ -116,24 +116,6 @@ If it is not provided, the provider region is used.`,
 				Computed:    true,
 				Description: `Expire time of the certificate in RFC3339 text format.`,
 			},
-			"name_prefix": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				Computed:      true,
-				ForceNew:      true,
-				ConflictsWith: []string{"name"},
-				Description:   "Creates a unique name beginning with the specified prefix. Conflicts with name.",
-				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
-					// https://cloud.google.com/compute/docs/reference/latest/sslCertificates#resource
-					// uuid is 26 characters, limit the prefix to 37.
-					value := v.(string)
-					if len(value) > 37 {
-						errors = append(errors, fmt.Errorf(
-							"%q cannot be longer than 37 characters, name is limited to 63", k))
-					}
-					return
-				},
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,

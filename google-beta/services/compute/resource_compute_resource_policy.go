@@ -248,7 +248,7 @@ both 13:00-5 and 08:00 are valid.`,
 												},
 											},
 										},
-										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
+										ExactlyOneOf: []string{},
 									},
 									"hourly_schedule": {
 										Type:        schema.TypeList,
@@ -275,7 +275,7 @@ where HH : [00-23] and MM : [00] GMT. eg: 21:00`,
 												},
 											},
 										},
-										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
+										ExactlyOneOf: []string{},
 									},
 									"weekly_schedule": {
 										Type:        schema.TypeList,
@@ -297,7 +297,7 @@ where HH : [00-23] and MM : [00] GMT. eg: 21:00`,
 												},
 											},
 										},
-										ExactlyOneOf: []string{"snapshot_schedule_policy.0.schedule.0.hourly_schedule", "snapshot_schedule_policy.0.schedule.0.daily_schedule", "snapshot_schedule_policy.0.schedule.0.weekly_schedule"},
+										ExactlyOneOf: []string{},
 									},
 								},
 							},
@@ -391,27 +391,6 @@ with RFC1035.`,
 			},
 		},
 		UseJSONNumber: true,
-	}
-}
-
-func computeResourcePolicySnapshotSchedulePolicyScheduleWeeklyScheduleDayOfWeeksSchema() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"day": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
-				Description:  `The day of the week to create the snapshot. e.g. MONDAY Possible values: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]`,
-			},
-			"start_time": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				Description: `Time within the window to start the operations.
-It must be in format "HH:MM", where HH : [00-23] and MM : [00-00] GMT.`,
-			},
-		},
 	}
 }
 

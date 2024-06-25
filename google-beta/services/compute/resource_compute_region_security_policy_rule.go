@@ -190,7 +190,7 @@ The above match condition matches packets with a source IP in 192.0.2.0/24 or 19
 							Optional:    true,
 							Description: `BGP Autonomous System Number associated with the source IP address.`,
 							Elem: &schema.Schema{
-								Type: schema.TypeInt,
+								Type: schema.TypeInteger,
 							},
 						},
 						"src_ip_ranges": {
@@ -806,14 +806,7 @@ func resourceComputeRegionSecurityPolicyRuleUpdate(d *schema.ResourceData, meta 
 	}
 
 	if d.HasChange("rate_limit_options") {
-		updateMask = append(updateMask, "rateLimitOptions.rateLimitThreshold",
-			"rateLimitOptions.conformAction",
-			"rateLimitOptions.exceedAction",
-			"rateLimitOptions.enforceOnKey",
-			"rateLimitOptions.enforceOnKeyName",
-			"rateLimitOptions.enforceOnKeyConfigs",
-			"rateLimitOptions.banThreshold",
-			"rateLimitOptions.banDurationSec")
+		updateMask = append(updateMask, "rateLimitOptions.rateLimitThreshold", "rateLimitOptions.conformAction", "rateLimitOptions.exceedAction", "rateLimitOptions.enforceOnKey", "rateLimitOptions.enforceOnKeyName", "rateLimitOptions.enforceOnKeyConfigs", "rateLimitOptions.banThreshold", "rateLimitOptions.banDurationSec")
 	}
 
 	if d.HasChange("preview") {
@@ -821,14 +814,7 @@ func resourceComputeRegionSecurityPolicyRuleUpdate(d *schema.ResourceData, meta 
 	}
 
 	if d.HasChange("network_match") {
-		updateMask = append(updateMask, "network_match.userDefinedFields",
-			"network_match.srcIpRanges",
-			"network_match.destIpRanges",
-			"network_match.ipProtocols",
-			"network_match.srcPorts",
-			"network_match.destPorts",
-			"network_match.srcRegionCodes",
-			"network_match.srcAsns")
+		updateMask = append(updateMask, "network_match.userDefinedFields", "network_match.srcIpRanges", "network_match.destIpRanges", "network_match.ipProtocols", "network_match.srcPorts", "network_match.destPorts", "network_match.srcRegionCodes", "network_match.srcAsns")
 	}
 	// updateMask is a URL parameter but not present in the schema, so ReplaceVars
 	// won't set it

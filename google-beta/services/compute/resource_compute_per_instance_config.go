@@ -219,42 +219,6 @@ State will be removed on the next instance recreation or update.`,
 	}
 }
 
-func computePerInstanceConfigPreservedStateDiskSchema() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"device_name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `A unique device name that is reflected into the /dev/ tree of a Linux operating system running within the instance.`,
-			},
-			"source": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `The URI of an existing persistent disk to attach under the specified device-name in the format
-'projects/project-id/zones/zone/disks/disk-name'.`,
-			},
-			"delete_rule": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"NEVER", "ON_PERMANENT_INSTANCE_DELETION", ""}),
-				Description: `A value that prescribes what should happen to the stateful disk when the VM instance is deleted.
-The available options are 'NEVER' and 'ON_PERMANENT_INSTANCE_DELETION'.
-'NEVER' - detach the disk when the VM is deleted, but do not delete the disk.
-'ON_PERMANENT_INSTANCE_DELETION' will delete the stateful disk when the VM is permanently
-deleted from the instance group. Default value: "NEVER" Possible values: ["NEVER", "ON_PERMANENT_INSTANCE_DELETION"]`,
-				Default: "NEVER",
-			},
-			"mode": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: verify.ValidateEnum([]string{"READ_ONLY", "READ_WRITE", ""}),
-				Description:  `The mode of the disk. Default value: "READ_WRITE" Possible values: ["READ_ONLY", "READ_WRITE"]`,
-				Default:      "READ_WRITE",
-			},
-		},
-	}
-}
-
 func resourceComputePerInstanceConfigCreate(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*transport_tpg.Config)
 	userAgent, err := tpgresource.GenerateUserAgentString(d, config.UserAgent)
@@ -396,12 +360,12 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 
 	// Explicitly set virtual fields to default values if unset
 	if _, ok := d.GetOkExists("minimal_action"); !ok {
-		if err := d.Set("minimal_action", "NONE"); err != nil {
+		if err := d.Set("minimal_action", NONE); err != nil {
 			return fmt.Errorf("Error setting minimal_action: %s", err)
 		}
 	}
 	if _, ok := d.GetOkExists("most_disruptive_allowed_action"); !ok {
-		if err := d.Set("most_disruptive_allowed_action", "REPLACE"); err != nil {
+		if err := d.Set("most_disruptive_allowed_action", REPLACE); err != nil {
 			return fmt.Errorf("Error setting most_disruptive_allowed_action: %s", err)
 		}
 	}
@@ -415,6 +379,7 @@ func resourceComputePerInstanceConfigRead(d *schema.ResourceData, meta interface
 			return fmt.Errorf("Error setting remove_instance_state_on_destroy: %s", err)
 		}
 	}
+
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading PerInstanceConfig: %s", err)
 	}
@@ -710,10 +675,10 @@ func resourceComputePerInstanceConfigImport(d *schema.ResourceData, meta interfa
 	d.SetId(id)
 
 	// Explicitly set virtual fields to default values on import
-	if err := d.Set("minimal_action", "NONE"); err != nil {
+	if err := d.Set("minimal_action", NONE); err != nil {
 		return nil, fmt.Errorf("Error setting minimal_action: %s", err)
 	}
-	if err := d.Set("most_disruptive_allowed_action", "REPLACE"); err != nil {
+	if err := d.Set("most_disruptive_allowed_action", REPLACE); err != nil {
 		return nil, fmt.Errorf("Error setting most_disruptive_allowed_action: %s", err)
 	}
 	if err := d.Set("remove_instance_on_destroy", false); err != nil {

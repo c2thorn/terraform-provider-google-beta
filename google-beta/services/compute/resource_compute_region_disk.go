@@ -749,6 +749,7 @@ func resourceComputeRegionDiskUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
+
 	if d.HasChange("size") {
 		obj := make(map[string]interface{})
 

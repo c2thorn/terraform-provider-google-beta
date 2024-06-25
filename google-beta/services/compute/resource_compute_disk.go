@@ -1236,6 +1236,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	}
+
 	if d.HasChange("size") {
 		obj := make(map[string]interface{})
 
@@ -1286,6 +1287,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	}
+
 	if d.HasChange("provisioned_iops") {
 		obj := make(map[string]interface{})
 
@@ -1336,6 +1338,7 @@ func resourceComputeDiskUpdate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	}
+
 	if d.HasChange("provisioned_throughput") {
 		obj := make(map[string]interface{})
 
@@ -2282,7 +2285,6 @@ func resourceComputeDiskUpdateEncoder(d *schema.ResourceData, meta interface{}, 
 	}
 	return obj, nil
 }
-
 func resourceComputeDiskDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
 	if v, ok := res["diskEncryptionKey"]; ok {
 		original := v.(map[string]interface{})

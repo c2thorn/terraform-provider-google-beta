@@ -822,6 +822,7 @@ func resourceComputeGlobalForwardingRuleUpdate(d *schema.ResourceData, meta inte
 			return err
 		}
 	}
+
 	if d.HasChange("target") {
 		obj := make(map[string]interface{})
 

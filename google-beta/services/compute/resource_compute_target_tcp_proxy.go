@@ -346,6 +346,7 @@ func resourceComputeTargetTcpProxyUpdate(d *schema.ResourceData, meta interface{
 			return err
 		}
 	}
+
 	if d.HasChange("backend_service") {
 		obj := make(map[string]interface{})
 

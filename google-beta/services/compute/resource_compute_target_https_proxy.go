@@ -515,6 +515,7 @@ func resourceComputeTargetHttpsProxyUpdate(d *schema.ResourceData, meta interfac
 			return err
 		}
 	}
+
 	if d.HasChange("certificate_manager_certificates") || d.HasChange("ssl_certificates") {
 		obj := make(map[string]interface{})
 
@@ -571,6 +572,7 @@ func resourceComputeTargetHttpsProxyUpdate(d *schema.ResourceData, meta interfac
 			return err
 		}
 	}
+
 	if d.HasChange("certificate_map") {
 		obj := make(map[string]interface{})
 
@@ -621,6 +623,7 @@ func resourceComputeTargetHttpsProxyUpdate(d *schema.ResourceData, meta interfac
 			return err
 		}
 	}
+
 	if d.HasChange("ssl_policy") {
 		obj := make(map[string]interface{})
 
@@ -671,6 +674,7 @@ func resourceComputeTargetHttpsProxyUpdate(d *schema.ResourceData, meta interfac
 			return err
 		}
 	}
+
 	if d.HasChange("url_map") {
 		obj := make(map[string]interface{})
 
@@ -1015,7 +1019,6 @@ func resourceComputeTargetHttpsProxyUpdateEncoder(d *schema.ResourceData, meta i
 	}
 	return obj, nil
 }
-
 func resourceComputeTargetHttpsProxyDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
 	// Since both sslCertificates and certificateManagerCertificates maps to the same API field (sslCertificates), we need to check the types
 	// of certificates that exist in the array and decide whether to change the field to certificateManagerCertificate or not.

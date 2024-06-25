@@ -524,6 +524,7 @@ func resourceComputeReservationUpdate(d *schema.ResourceData, meta interface{}) 
 			return err
 		}
 	}
+
 	d.Partial(true)
 
 	if d.HasChange("specific_reservation") {

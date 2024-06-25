@@ -361,13 +361,6 @@ instances on the specified network.`,
 				Computed:    true,
 				Description: `Creation timestamp in RFC3339 text format.`,
 			},
-			"enable_logging": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Computed:    true,
-				Deprecated:  "Deprecated in favor of log_config",
-				Description: "This field denotes whether to enable logging for a particular firewall rule. If logging is enabled, logs will be exported to Stackdriver.",
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,

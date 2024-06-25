@@ -73,7 +73,6 @@ func ResourceComputeSubnetwork() *schema.Resource {
 		},
 
 		CustomizeDiff: customdiff.All(
-			resourceComputeSubnetworkSecondaryIpRangeSetStyleDiff,
 			customdiff.ForceNewIfChange("ip_cidr_range", IsShrinkageIpCidr),
 			tpgresource.DefaultProviderProject,
 		),
@@ -160,7 +159,7 @@ Toggles the aggregation interval for collecting flow logs. Increasing the
 interval time will reduce the amount of generated flow logs for long
 lasting connections. Default is an interval of 5 seconds per connection. Default value: "INTERVAL_5_SEC" Possible values: ["INTERVAL_5_SEC", "INTERVAL_30_SEC", "INTERVAL_1_MIN", "INTERVAL_5_MIN", "INTERVAL_10_MIN", "INTERVAL_15_MIN"]`,
 							Default:      "INTERVAL_5_SEC",
-							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filter_expr"},
+							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filterExpr"},
 						},
 						"filter_expr": {
 							Type:     schema.TypeString,
@@ -168,8 +167,8 @@ lasting connections. Default is an interval of 5 seconds per connection. Default
 							Description: `Export filter used to define which VPC flow logs should be logged, as as CEL expression. See
 https://cloud.google.com/vpc/docs/flow-logs#filtering for details on how to format this field.
 The default value is 'true', which evaluates to include everything.`,
-							Default:      "true",
-							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filter_expr"},
+							Default:      true,
+							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filterExpr"},
 						},
 						"flow_sampling": {
 							Type:     schema.TypeFloat,
@@ -180,7 +179,7 @@ flow logs within the subnetwork where 1.0 means all collected logs are
 reported and 0.0 means no logs are reported. Default is 0.5 which means
 half of all collected logs are reported.`,
 							Default:      0.5,
-							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filter_expr"},
+							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filterExpr"},
 						},
 						"metadata": {
 							Type:         schema.TypeString,
@@ -190,7 +189,7 @@ half of all collected logs are reported.`,
 Configures whether metadata fields should be added to the reported VPC
 flow logs. Default value: "INCLUDE_ALL_METADATA" Possible values: ["EXCLUDE_ALL_METADATA", "INCLUDE_ALL_METADATA", "CUSTOM_METADATA"]`,
 							Default:      "INCLUDE_ALL_METADATA",
-							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filter_expr"},
+							AtLeastOneOf: []string{"log_config.0.aggregation_interval", "log_config.0.flow_sampling", "log_config.0.metadata", "log_config.0.filterExpr"},
 						},
 						"metadata_fields": {
 							Type:     schema.TypeSet,
@@ -269,6 +268,7 @@ For more details about this behavior, see [this section](https://www.terraform.i
 						"ip_cidr_range": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: verify.ValidateIpCidrRange,
 							Description: `The range of IP addresses belonging to this subnetwork secondary
 range. Provide this property when you create the subnetwork.
@@ -278,6 +278,7 @@ secondary IP ranges within a network. Only IPv4 is supported.`,
 						"range_name": {
 							Type:         schema.TypeString,
 							Required:     true,
+							ForceNew:     true,
 							ValidateFunc: verify.ValidateGCEName,
 							Description: `The name associated with this subnetwork secondary range, used
 when adding an alias IP range to a VM instance. The name must
@@ -316,12 +317,6 @@ outside this subnetwork.`,
 				Computed:    true,
 				Description: `The range of internal IPv6 addresses that are owned by this subnetwork.`,
 			},
-			"fingerprint": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Fingerprint of this resource. This field is used internally during updates of this resource.",
-				Deprecated:  "This field is not useful for users, and has been removed as an output.",
-			},
 			"project": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -338,7 +333,8 @@ outside this subnetwork.`,
 }
 
 func resourceComputeSubnetworkSecondaryIpRangeSetStyleDiff(_ context.Context, diff *schema.ResourceDiff, meta interface{}) error {
-	keys := diff.GetChangedKeysPrefix("secondary_ip_range")
+
+	keys := diff.GetChangedKeysPrefix(secondary_ip_range)
 	if len(keys) == 0 {
 		return nil
 	}
@@ -367,11 +363,11 @@ func resourceComputeSubnetworkSecondaryIpRangeSetStyleDiff(_ context.Context, di
 		}
 	}
 
-	oldSet := schema.NewSet(schema.HashResource(ResourceComputeSubnetwork().Schema["secondary_ip_range"].Elem.(*schema.Resource)), old)
-	newSet := schema.NewSet(schema.HashResource(ResourceComputeSubnetwork().Schema["secondary_ip_range"].Elem.(*schema.Resource)), new)
+	oldSet := schema.NewSet(schema.HashResource(ResourceComputeSubnetwork().Schema[secondary_ip_range].Elem.(*schema.Resource)), old)
+	newSet := schema.NewSet(schema.HashResource(ResourceComputeSubnetwork().Schema[secondary_ip_range].Elem.(*schema.Resource)), new)
 
 	if oldSet.Equal(newSet) {
-		if err := diff.Clear("secondary_ip_range"); err != nil {
+		if err := diff.Clear(secondary_ip_range); err != nil {
 			return err
 		}
 	}
@@ -702,6 +698,145 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
+
+	if d.HasChange("role") {
+		obj := make(map[string]interface{})
+
+		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		getRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "GET",
+			Project:   billingProject,
+			RawURL:    getUrl,
+			UserAgent: userAgent,
+		})
+		if err != nil {
+			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork%q", d.Id()))
+		}
+
+		obj["fingerprint"] = getRes["fingerprint"]
+
+		roleProp, err := expandComputeSubnetworkRole(d.Get("role"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("role"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, roleProp)) {
+			obj["role"] = roleProp
+		}
+
+		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		headers := make(http.Header)
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Subnetwork %q: %#v", d.Id(), res)
+		}
+
+		err = ComputeOperationWaitTime(
+			config, res, project, "Updating Subnetwork", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+
+	if d.HasChange("secondary_ip_range") {
+		obj := make(map[string]interface{})
+
+		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		getRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "GET",
+			Project:   billingProject,
+			RawURL:    getUrl,
+			UserAgent: userAgent,
+		})
+		if err != nil {
+			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork%q", d.Id()))
+		}
+
+		obj["fingerprint"] = getRes["fingerprint"]
+
+		secondaryIpRangesProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
+		if err != nil {
+			return err
+		} else if v, ok := d.GetOkExists("secondary_ip_range"); ok || !reflect.DeepEqual(v, secondaryIpRangesProp) {
+			obj["secondaryIpRanges"] = secondaryIpRangesProp
+		}
+
+		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
+		if err != nil {
+			return err
+		}
+
+		headers := make(http.Header)
+
+		// err == nil indicates that the billing_project value was found
+		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
+			billingProject = bp
+		}
+
+		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
+			Config:    config,
+			Method:    "PATCH",
+			Project:   billingProject,
+			RawURL:    url,
+			UserAgent: userAgent,
+			Body:      obj,
+			Timeout:   d.Timeout(schema.TimeoutUpdate),
+			Headers:   headers,
+		})
+		if err != nil {
+			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
+		} else {
+			log.Printf("[DEBUG] Finished updating Subnetwork %q: %#v", d.Id(), res)
+		}
+
+		err = ComputeOperationWaitTime(
+			config, res, project, "Updating Subnetwork", userAgent,
+			d.Timeout(schema.TimeoutUpdate))
+		if err != nil {
+			return err
+		}
+	}
+
 	if d.HasChange("private_ip_google_access") {
 		obj := make(map[string]interface{})
 
@@ -747,6 +882,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
+
 	if d.HasChange("private_ipv6_google_access") || d.HasChange("stack_type") || d.HasChange("ipv6_access_type") || d.HasChange("allow_subnet_cidr_routes_overlap") {
 		obj := make(map[string]interface{})
 
@@ -768,7 +904,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 		})
 		if err != nil {
-			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
+			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork%q", d.Id()))
 		}
 
 		obj["fingerprint"] = getRes["fingerprint"]
@@ -833,6 +969,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		}
 	}
+
 	if d.HasChange("log_config") {
 		obj := make(map[string]interface{})
 
@@ -854,7 +991,7 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			UserAgent: userAgent,
 		})
 		if err != nil {
-			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
+			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork%q", d.Id()))
 		}
 
 		obj["fingerprint"] = getRes["fingerprint"]
@@ -864,142 +1001,6 @@ func resourceComputeSubnetworkUpdate(d *schema.ResourceData, meta interface{}) e
 			return err
 		} else if v, ok := d.GetOkExists("log_config"); ok || !reflect.DeepEqual(v, logConfigProp) {
 			obj["logConfig"] = logConfigProp
-		}
-
-		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		headers := make(http.Header)
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "PATCH",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
-			Headers:   headers,
-		})
-		if err != nil {
-			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
-		} else {
-			log.Printf("[DEBUG] Finished updating Subnetwork %q: %#v", d.Id(), res)
-		}
-
-		err = ComputeOperationWaitTime(
-			config, res, project, "Updating Subnetwork", userAgent,
-			d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return err
-		}
-	}
-	if d.HasChange("role") {
-		obj := make(map[string]interface{})
-
-		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		getRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "GET",
-			Project:   billingProject,
-			RawURL:    getUrl,
-			UserAgent: userAgent,
-		})
-		if err != nil {
-			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
-		}
-
-		obj["fingerprint"] = getRes["fingerprint"]
-
-		roleProp, err := expandComputeSubnetworkRole(d.Get("role"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("role"); !tpgresource.IsEmptyValue(reflect.ValueOf(v)) && (ok || !reflect.DeepEqual(v, roleProp)) {
-			obj["role"] = roleProp
-		}
-
-		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		headers := make(http.Header)
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		res, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "PATCH",
-			Project:   billingProject,
-			RawURL:    url,
-			UserAgent: userAgent,
-			Body:      obj,
-			Timeout:   d.Timeout(schema.TimeoutUpdate),
-			Headers:   headers,
-		})
-		if err != nil {
-			return fmt.Errorf("Error updating Subnetwork %q: %s", d.Id(), err)
-		} else {
-			log.Printf("[DEBUG] Finished updating Subnetwork %q: %#v", d.Id(), res)
-		}
-
-		err = ComputeOperationWaitTime(
-			config, res, project, "Updating Subnetwork", userAgent,
-			d.Timeout(schema.TimeoutUpdate))
-		if err != nil {
-			return err
-		}
-	}
-	if d.HasChange("secondary_ip_range") {
-		obj := make(map[string]interface{})
-
-		getUrl, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")
-		if err != nil {
-			return err
-		}
-
-		// err == nil indicates that the billing_project value was found
-		if bp, err := tpgresource.GetBillingProject(d, config); err == nil {
-			billingProject = bp
-		}
-
-		getRes, err := transport_tpg.SendRequest(transport_tpg.SendRequestOptions{
-			Config:    config,
-			Method:    "GET",
-			Project:   billingProject,
-			RawURL:    getUrl,
-			UserAgent: userAgent,
-		})
-		if err != nil {
-			return transport_tpg.HandleNotFoundError(err, d, fmt.Sprintf("ComputeSubnetwork %q", d.Id()))
-		}
-
-		obj["fingerprint"] = getRes["fingerprint"]
-
-		secondaryIpRangesProp, err := expandComputeSubnetworkSecondaryIpRange(d.Get("secondary_ip_range"), d, config)
-		if err != nil {
-			return err
-		} else if v, ok := d.GetOkExists("secondary_ip_range"); ok || !reflect.DeepEqual(v, secondaryIpRangesProp) {
-			obj["secondaryIpRanges"] = secondaryIpRangesProp
 		}
 
 		url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/regions/{{region}}/subnetworks/{{name}}")

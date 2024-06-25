@@ -1809,6 +1809,7 @@ func resourceComputeRegionBackendServiceUpdate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return err
 	}
+
 	d.Partial(true)
 
 	if d.HasChange("security_policy") {

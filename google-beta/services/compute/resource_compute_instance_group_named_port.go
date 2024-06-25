@@ -135,6 +135,7 @@ func resourceComputeInstanceGroupNamedPortCreate(d *schema.ResourceData, meta in
 	if err != nil {
 		return err
 	}
+
 	billingProject := ""
 
 	project, err := tpgresource.GetProject(d, config)
@@ -511,9 +512,10 @@ func resourceComputeInstanceGroupNamedPortPatchDeleteEncoder(d *schema.ResourceD
 
 // ListForPatch handles making API request to get parent resource and
 // extracting list of objects.
+
 func resourceComputeInstanceGroupNamedPortListForPatch(d *schema.ResourceData, meta interface{}) ([]interface{}, error) {
 	config := meta.(*transport_tpg.Config)
-	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}projects/{{project}}/zones/{{zone}}/instanceGroups/{{group}}")
+	url, err := tpgresource.ReplaceVars(d, config, "{{ComputeBasePath}}{{$.SelfLinkUri}}")
 	if err != nil {
 		return nil, err
 	}
@@ -540,6 +542,11 @@ func resourceComputeInstanceGroupNamedPortListForPatch(d *schema.ResourceData, m
 
 	var v interface{}
 	var ok bool
+	if v, ok = res["namedPorts"]; ok && v != nil {
+		res = v.(map[string]interface{})
+	} else {
+		return nil, nil
+	}
 
 	v, ok = res["namedPorts"]
 	if ok && v != nil {
