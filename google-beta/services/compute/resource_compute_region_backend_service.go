@@ -4224,7 +4224,6 @@ func expandComputeRegionBackendServiceRegion(v interface{}, d tpgresource.Terraf
 }
 
 func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
-
 	if d.Get("load_balancing_scheme").(string) == "EXTERNAL_MANAGED" || d.Get("load_balancing_scheme").(string) == "INTERNAL_MANAGED" {
 		return obj, nil
 	}
@@ -4276,7 +4275,6 @@ func resourceComputeRegionBackendServiceEncoder(d *schema.ResourceData, meta int
 }
 
 func resourceComputeRegionBackendServiceDecoder(d *schema.ResourceData, meta interface{}, res map[string]interface{}) (map[string]interface{}, error) {
-
 	// Since we add in a NONE subsetting policy, we need to remove it in some
 	// cases for backwards compatibility with the config
 	v, ok := res["subsetting"]

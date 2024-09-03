@@ -32,10 +32,9 @@ func TestAccLoggingLogViewIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -62,10 +61,9 @@ func TestAccLoggingLogViewIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -89,10 +87,9 @@ func TestAccLoggingLogViewIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -119,10 +116,9 @@ func TestAccLoggingLogViewIamBindingGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -147,10 +143,9 @@ func TestAccLoggingLogViewIamBindingGenerated_withAndWithoutCondition(t *testing
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -173,10 +168,9 @@ func TestAccLoggingLogViewIamMemberGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -201,10 +195,9 @@ func TestAccLoggingLogViewIamMemberGenerated_withAndWithoutCondition(t *testing.
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",
@@ -227,10 +220,9 @@ func TestAccLoggingLogViewIamPolicyGenerated_withCondition(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/logging.admin",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":           acctest.RandString(t, 10),
+		"role":                    "roles/logging.admin",
+		"project":                 envvar.GetTestProjectFromEnv(),
 		"condition_title":         "expires_after_2019_12_31",
 		"condition_expr":          `request.time < timestamp(\"2020-01-01T00:00:00Z\")`,
 		"condition_desc":          "Expiring at midnight of 2019-12-31",

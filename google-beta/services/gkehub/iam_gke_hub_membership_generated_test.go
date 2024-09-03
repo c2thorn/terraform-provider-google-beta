@@ -31,11 +31,10 @@ func TestAccGKEHubMembershipIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"location":      envvar.GetTestRegionFromEnv(),
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":   acctest.RandString(t, 10),
+		"role":            "roles/viewer",
+		"location":        envvar.GetTestRegionFromEnv(),
+		"project":         envvar.GetTestProjectFromEnv(),
 		"network_name":    acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name": acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
 	}
@@ -71,11 +70,10 @@ func TestAccGKEHubMembershipIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"location":      envvar.GetTestRegionFromEnv(),
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":   acctest.RandString(t, 10),
+		"role":            "roles/viewer",
+		"location":        envvar.GetTestRegionFromEnv(),
+		"project":         envvar.GetTestProjectFromEnv(),
 		"network_name":    acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name": acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
 	}
@@ -102,11 +100,10 @@ func TestAccGKEHubMembershipIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"location":      envvar.GetTestRegionFromEnv(),
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":   acctest.RandString(t, 10),
+		"role":            "roles/viewer",
+		"location":        envvar.GetTestRegionFromEnv(),
+		"project":         envvar.GetTestProjectFromEnv(),
 		"network_name":    acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name": acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
 	}

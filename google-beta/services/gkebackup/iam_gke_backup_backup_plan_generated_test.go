@@ -31,10 +31,9 @@ func TestAccGKEBackupBackupPlanIamBindingGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":       acctest.RandString(t, 10),
+		"role":                "roles/viewer",
+		"project":             envvar.GetTestProjectFromEnv(),
 		"deletion_protection": false,
 		"network_name":        acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name":     acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
@@ -71,10 +70,9 @@ func TestAccGKEBackupBackupPlanIamMemberGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":       acctest.RandString(t, 10),
+		"role":                "roles/viewer",
+		"project":             envvar.GetTestProjectFromEnv(),
 		"deletion_protection": false,
 		"network_name":        acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name":     acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
@@ -102,10 +100,9 @@ func TestAccGKEBackupBackupPlanIamPolicyGenerated(t *testing.T) {
 	t.Parallel()
 
 	context := map[string]interface{}{
-		"random_suffix": acctest.RandString(t, 10),
-		"role":          "roles/viewer",
-		"project":       envvar.GetTestProjectFromEnv(),
-
+		"random_suffix":       acctest.RandString(t, 10),
+		"role":                "roles/viewer",
+		"project":             envvar.GetTestProjectFromEnv(),
 		"deletion_protection": false,
 		"network_name":        acctest.BootstrapSharedTestNetwork(t, "gke-cluster"),
 		"subnetwork_name":     acctest.BootstrapSubnet(t, "gke-cluster", acctest.BootstrapSharedTestNetwork(t, "gke-cluster")),
