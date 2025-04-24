@@ -2458,13 +2458,7 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 
 		token := &oauth2.Token{AccessToken: contents}
 		if c.ImpersonateServiceAccount != "" && !initialCredentialsOnly {
-			opts := []option.ClientOption{
-				option.WithCredentialsJSON([]byte(contents)),
-				option.ImpersonateCredentials(c.ImpersonateServiceAccount, c.ImpersonateServiceAccountDelegates...),
-				option.WithScopes(clientScopes...),
-				option.WithUniverseDomain(c.UniverseDomain),
-				internaloption.EnableNewAuthLibrary(),
-			}
+			opts := []option.ClientOption{option.WithTokenSource(oauth2.StaticTokenSource(token)), option.ImpersonateCredentials(c.ImpersonateServiceAccount, c.ImpersonateServiceAccountDelegates...), option.WithScopes(clientScopes...)}
 			creds, err := transport.Creds(context.TODO(), opts...)
 			if err != nil {
 				return googleoauth.Credentials{}, err
@@ -2499,7 +2493,13 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 		}
 
 		if c.ImpersonateServiceAccount != "" && !initialCredentialsOnly {
-			opts := []option.ClientOption{option.WithCredentialsJSON([]byte(contents)), option.ImpersonateCredentials(c.ImpersonateServiceAccount, c.ImpersonateServiceAccountDelegates...), option.WithScopes(clientScopes...)}
+			opts := []option.ClientOption{
+				option.WithCredentialsJSON([]byte(contents)),
+				option.ImpersonateCredentials(c.ImpersonateServiceAccount, c.ImpersonateServiceAccountDelegates...),
+				option.WithScopes(clientScopes...),
+				option.WithUniverseDomain(c.UniverseDomain),
+				internaloption.EnableNewAuthLibrary(),
+			}
 			creds, err := transport.Creds(context.TODO(), opts...)
 			if err != nil {
 				return googleoauth.Credentials{}, err
