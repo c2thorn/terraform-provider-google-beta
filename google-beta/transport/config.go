@@ -2496,34 +2496,34 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 		}
 
 		if c.ImpersonateServiceAccount != "" && !initialCredentialsOnly {
-			precreds, err := credentials.DetectDefault(&credentials.DetectOptions{
+			jsonCreds, err := credentials.DetectDefault(&credentials.DetectOptions{
+				Scopes:          clientScopes,
 				CredentialsJSON: []byte(contents),
-				UniverseDomain:  c.UniverseDomain,
 			})
+			if err != nil {
+				return googleoauth.Credentials{}, fmt.Errorf("error loading credentials: %s", err)
+			}
 
-			authCred, err := impersonate.NewCredentials(&impersonate.CredentialsOptions{
+			impersonateOpts := &impersonate.CredentialsOptions{
 				TargetPrincipal: c.ImpersonateServiceAccount,
 				Scopes:          clientScopes,
 				Delegates:       c.ImpersonateServiceAccountDelegates,
-				UniverseDomain:  c.UniverseDomain,
-				Credentials:     precreds,
-			})
-			if err != nil {
-				log.Fatal(err)
+				Credentials:     jsonCreds,
 			}
 
-			// DEBUG: Testing token beforehand
-			token, err := authCred.Token(context.TODO())
+			if c.UniverseDomain != "" && c.UniverseDomain != "googleapis.com" {
+				impersonateOpts.UniverseDomain = c.UniverseDomain
+			}
+
+			authCred, err := impersonate.NewCredentials(impersonateOpts)
 			if err != nil {
-				log.Printf("Universe domain: %s", c.UniverseDomain)
-				log.Fatal(token, err)
+				return googleoauth.Credentials{}, fmt.Errorf("error loading credentials: %s", err)
 			}
 
 			creds := oauth2adapt.Oauth2CredentialsFromAuthCredentials(authCred)
 			if err != nil {
-				log.Fatal(err)
+				return googleoauth.Credentials{}, fmt.Errorf("error loading credentials: %s", err)
 			}
-
 			return *creds, nil
 		}
 
