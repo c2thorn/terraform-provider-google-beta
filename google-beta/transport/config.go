@@ -16,6 +16,9 @@ import (
 	"strings"
 	"time"
 
+	"cloud.google.com/go/auth/credentials"
+	"cloud.google.com/go/auth/credentials/impersonate"
+	"cloud.google.com/go/auth/oauth2adapt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 
@@ -45,7 +48,7 @@ import (
 	"google.golang.org/api/cloudkms/v1"
 	"google.golang.org/api/cloudresourcemanager/v1"
 	resourceManagerV3 "google.golang.org/api/cloudresourcemanager/v3"
-	"google.golang.org/api/composer/v1beta1"
+	composer "google.golang.org/api/composer/v1beta1"
 	compute "google.golang.org/api/compute/v0.beta"
 	container "google.golang.org/api/container/v1beta1"
 	dataflow "google.golang.org/api/dataflow/v1b3"
@@ -2493,17 +2496,34 @@ func (c *Config) GetCredentials(clientScopes []string, initialCredentialsOnly bo
 		}
 
 		if c.ImpersonateServiceAccount != "" && !initialCredentialsOnly {
-			opts := []option.ClientOption{
-				option.WithCredentialsJSON([]byte(contents)),
-				option.ImpersonateCredentials(c.ImpersonateServiceAccount, c.ImpersonateServiceAccountDelegates...),
-				option.WithScopes(clientScopes...),
-				option.WithUniverseDomain(c.UniverseDomain),
-				internaloption.EnableNewAuthLibrary(),
-			}
-			creds, err := transport.Creds(context.TODO(), opts...)
+			precreds, err := credentials.DetectDefault(&credentials.DetectOptions{
+				CredentialsJSON: []byte(contents),
+				UniverseDomain:  c.UniverseDomain,
+			})
+
+			authCred, err := impersonate.NewCredentials(&impersonate.CredentialsOptions{
+				TargetPrincipal: c.ImpersonateServiceAccount,
+				Scopes:          clientScopes,
+				Delegates:       c.ImpersonateServiceAccountDelegates,
+				UniverseDomain:  c.UniverseDomain,
+				Credentials:     precreds,
+			})
 			if err != nil {
-				return googleoauth.Credentials{}, err
+				log.Fatal(err)
 			}
+
+			// DEBUG: Testing token beforehand
+			token, err := authCred.Token(context.TODO())
+			if err != nil {
+				log.Printf("Universe domain: %s", c.UniverseDomain)
+				log.Fatal(token, err)
+			}
+
+			creds := oauth2adapt.Oauth2CredentialsFromAuthCredentials(authCred)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			return *creds, nil
 		}
 
