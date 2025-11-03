@@ -1,0 +1,4 @@
+provenance,resource_count,with_hits,coverage_percent,total_score,total_nested_weight,total_non_nested_weight,Representation,NullEmpty,Ordering,CustomizeDiff,NestedBlock
+Generated,1079,988,91.6,9070.50,4854.00,4216.50,1490,70,472,900,16792
+Handwritten,88,73,83.0,1930.80,1094.00,836.80,377,54,94,122,1969
+HandwrittenIAM,66,63,95.5,73.50,0.00,73.50,42,0,21,0,72
