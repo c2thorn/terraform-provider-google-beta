@@ -136,7 +136,6 @@ type resourceStats struct {
 	NonNestedTotal float64
 	FamilyHits     map[string]float64
 	ClassHits      map[string]float64
-	NestedCritical float64
 }
 
 type TierResult struct {
@@ -145,16 +144,13 @@ type TierResult struct {
 	NestedWeight    float64
 	NonNestedWeight float64
 	Tier            string
-	LikelyBreaking  bool
 	Stats           *resourceStats
 }
 
 type TierThresholds struct {
-	P50             float64
-	P75             float64
-	P90             float64
-	NestedThreshold float64
-	NestedP75       float64
+	P50 float64
+	P75 float64
+	P90 float64
 }
 
 type Analyzer struct {
@@ -1557,9 +1553,6 @@ func computeResourceStats(hits []Hit, resources []RegistryEntry) map[string]*res
 		stat.NonNestedTotal += hit.NonNestedWeight
 		stat.FamilyHits[hit.Family] += 1
 		stat.ClassHits[hit.AttrClass] += 1
-		if hit.Family == "NestedBlock" && (hit.AttrClass == "Required" || hit.AttrClass == "Optional" || hit.AttrClass == "Optional+Computed") {
-			stat.NestedCritical += 1
-		}
 	}
 	return stats
 }
@@ -1618,18 +1611,13 @@ func writeClassHeatmap(path string, stats map[string]*resourceStats) error {
 
 func writeTiers(path string, stats map[string]*resourceStats) (map[string]*TierResult, TierThresholds, error) {
 	var scores []float64
-	var nested []float64
 	for _, stat := range stats {
 		scores = append(scores, stat.Score)
-		nested = append(nested, stat.NestedCritical)
 	}
 	sort.Float64s(scores)
-	sort.Float64s(nested)
 	p50 := percentile(scores, 50)
 	p75 := percentile(scores, 75)
 	p90 := percentile(scores, 90)
-	nestedP75 := percentile(nested, 75)
-	nestedThreshold := math.Max(2, math.Round(nestedP75))
 
 	results := map[string]*TierResult{}
 
@@ -1640,7 +1628,7 @@ func writeTiers(path string, stats map[string]*resourceStats) (map[string]*TierR
 	defer f.Close()
 	w := csv.NewWriter(f)
 	defer w.Flush()
-	header := []string{"resource", "score", "nested_weight", "non_nested_weight", "tier", "LikelyBreaking", "provenance", "product", "is_iam"}
+	header := []string{"resource", "score", "nested_weight", "non_nested_weight", "tier", "provenance", "product", "is_iam"}
 	for _, fam := range families {
 		header = append(header, fam)
 	}
@@ -1654,15 +1642,13 @@ func writeTiers(path string, stats map[string]*resourceStats) (map[string]*TierR
 	resources := sortedKeys(stats)
 	for _, resource := range resources {
 		stat := stats[resource]
-		tier := determineTier(stat.Score, stat.NestedCritical, p50, p75, p90, nestedThreshold)
-		likelyBreaking := stat.NestedCritical >= 1
+		tier := determineTier(stat.Score, p50, p75, p90)
 		row := []string{
 			resource,
 			fmt.Sprintf("%.2f", stat.Score),
 			fmt.Sprintf("%.2f", stat.NestedTotal),
 			fmt.Sprintf("%.2f", stat.NonNestedTotal),
 			tier,
-			fmt.Sprintf("%t", likelyBreaking),
 			stat.Entry.Provenance,
 			stat.Entry.Product,
 			fmt.Sprintf("%t", stat.Entry.IsIAM),
@@ -1682,19 +1668,29 @@ func writeTiers(path string, stats map[string]*resourceStats) (map[string]*TierR
 			NestedWeight:    stat.NestedTotal,
 			NonNestedWeight: stat.NonNestedTotal,
 			Tier:            tier,
-			LikelyBreaking:  likelyBreaking,
 			Stats:           stat,
 		}
 	}
 
 	thresholds := TierThresholds{
-		P50:             p50,
-		P75:             p75,
-		P90:             p90,
-		NestedP75:       nestedP75,
-		NestedThreshold: nestedThreshold,
+		P50: p50,
+		P75: p75,
+		P90: p90,
 	}
 	return results, thresholds, nil
+}
+
+func determineTier(score, p50, p75, p90 float64) string {
+	switch {
+	case score >= p90:
+		return "A"
+	case score >= p75:
+		return "B"
+	case score >= p50:
+		return "C"
+	default:
+		return "D"
+	}
 }
 
 func percentile(values []float64, p float64) float64 {
@@ -1713,20 +1709,6 @@ func percentile(values []float64, p float64) float64 {
 	fraction := rank - float64(lower)
 	return values[lower] + fraction*(values[upper]-values[lower])
 }
-
-func determineTier(score, nested, p50, p75, p90, nestedThreshold float64) string {
-	switch {
-	case score >= p90 || nested >= nestedThreshold:
-		return "A"
-	case score >= p75:
-		return "B"
-	case score >= p50:
-		return "C"
-	default:
-		return "D"
-	}
-}
-
 func writeTop20(path string, tiers map[string]*TierResult) error {
 	list := make([]*TierResult, 0, len(tiers))
 	for _, res := range tiers {
@@ -1748,7 +1730,7 @@ func writeTop20(path string, tiers map[string]*TierResult) error {
 	defer f.Close()
 	w := csv.NewWriter(f)
 	defer w.Flush()
-	header := []string{"resource", "score", "nested_weight", "non_nested_weight", "tier", "LikelyBreaking", "provenance", "product", "is_iam"}
+	header := []string{"resource", "score", "nested_weight", "non_nested_weight", "tier", "provenance", "product", "is_iam"}
 	if err := w.Write(header); err != nil {
 		return err
 	}
@@ -1759,7 +1741,6 @@ func writeTop20(path string, tiers map[string]*TierResult) error {
 			fmt.Sprintf("%.2f", item.NestedWeight),
 			fmt.Sprintf("%.2f", item.NonNestedWeight),
 			item.Tier,
-			fmt.Sprintf("%t", item.LikelyBreaking),
 			item.Stats.Entry.Provenance,
 			item.Stats.Entry.Product,
 			fmt.Sprintf("%t", item.Stats.Entry.IsIAM),
@@ -1934,7 +1915,7 @@ func writeProductTop(path string, stats map[string]*resourceStats, tiers map[str
 	defer f.Close()
 	w := csv.NewWriter(f)
 	defer w.Flush()
-	if err := w.Write([]string{"product", "resource", "score", "nested_weight", "non_nested_weight", "tier", "LikelyBreaking", "provenance", "is_iam"}); err != nil {
+	if err := w.Write([]string{"product", "resource", "score", "nested_weight", "non_nested_weight", "tier", "provenance", "is_iam"}); err != nil {
 		return err
 	}
 	for _, product := range products {
@@ -1947,7 +1928,6 @@ func writeProductTop(path string, stats map[string]*resourceStats, tiers map[str
 			fmt.Sprintf("%.2f", tier.NestedWeight),
 			fmt.Sprintf("%.2f", tier.NonNestedWeight),
 			tier.Tier,
-			fmt.Sprintf("%t", tier.LikelyBreaking),
 			stat.Entry.Provenance,
 			fmt.Sprintf("%t", stat.Entry.IsIAM),
 		}
@@ -2146,20 +2126,14 @@ func writeMethods(path string, config RunConfig) error {
 
 func writeTierSummary(path string, thresholds TierThresholds, tiers map[string]*TierResult) error {
 	counts := map[string]int{"A": 0, "B": 0, "C": 0, "D": 0}
-	likelyBreaking := 0
 	for _, tier := range tiers {
 		counts[tier.Tier]++
-		if tier.LikelyBreaking {
-			likelyBreaking++
-		}
 	}
 	lines := []string{
 		"# Tier Summary",
 		fmt.Sprintf("- Score percentiles: P50=%.2f, P75=%.2f, P90=%.2f.", thresholds.P50, thresholds.P75, thresholds.P90),
-		fmt.Sprintf("- Nested block threshold: P75=%.2f → override X=%.0f nested critical blocks.", thresholds.NestedP75, thresholds.NestedThreshold),
 		fmt.Sprintf("- Tier counts: A=%d, B=%d, C=%d, D=%d.", counts["A"], counts["B"], counts["C"], counts["D"]),
-		fmt.Sprintf("- LikelyBreaking resources (nested block with mutable attrs): %d.", likelyBreaking),
-		"- Tiering rule: Tier A if score ≥ P90 or nested blocks ≥ X; Tier B ≥ P75; Tier C ≥ P50; Tier D otherwise.",
+		"- Tiering rule: Tier A if score ≥ P90; Tier B ≥ P75; Tier C ≥ P50; Tier D otherwise.",
 	}
 	return os.WriteFile(path, []byte(strings.Join(lines, "\n")+"\n"), 0o644)
 }
